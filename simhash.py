@@ -22,15 +22,15 @@ class SimHash:
         return res
 
     def encode(self, text: str) -> str:
-        words = self.segment(text)
+        words = self.segment(text)  # step1: 分词
         code = [0] * self.hash_size
         for word in words:
-            hash_code = self.hash(word, self.hash_size)
+            hash_code = self.han_hash(word, self.hash_size)  # step 2: Hash
             word_weight = self.weight_dict.get(word, 1)
-            weights = self.hash_weight(hash_code, word_weight)
+            weights = self.hash_weight(hash_code, word_weight)  # step 3: 加权
             for i, w in enumerate(weights):
-                code[i] += w
-        for i, c in enumerate(code):
+                code[i] += w    # step 4: 合并
+        for i, c in enumerate(code):    # step 5: 降维
             if c > 0:
                 code[i] = 1
             else:
@@ -63,7 +63,23 @@ class SimHash:
 
     @staticmethod
     def hash(text: str, hash_size: int):
-        return bin(int(hashlib.md5(text.encode('utf8')).hexdigest(), 16))[2:].zfill(hash_size)[-hash_size:]
+        return bin(int(hashlib.md5(text.encode('utf-8')).hexdigest(), 16))[2:].zfill(hash_size)[-hash_size:]
+
+    @staticmethod
+    def han_hash(text: str, hash_size: int):
+        if text == "":
+            return 0
+        else:
+            x = ord(text[0]) << 7
+            m = 1000003
+            mask = 2 ** hash_size - 1
+            for c in text:
+                x = ((x * m) ^ ord(c)) & mask
+            x ^= len(text)
+            if x == -1:
+                x = -2
+            x = bin(x)[2:].zfill(hash_size)[-hash_size:]
+            return str(x)
 
     @staticmethod
     def hamming(x: int, y: int, bit: int) -> int:
@@ -80,29 +96,25 @@ class SimHash:
 
 
 if __name__ == '__main__':
-    # a = '101010'
-    # b = '111111'
-    # c = SimHash.covert_str_to_int(a)
-    # d = SimHash.covert_str_to_int(b)
-    # print(c)
-    # print(d)
-    # print(SimHash.hamming(c, d, 6))
-
-    e = '哈哈哈'*100 + '南京市长江大桥上的汽车'*100
-    f = '哈哈哈'*100 + '南京长江大桥上的车'*100
-    # print(e.encode('utf-8'))
-    # print(hashlib.md5(e.encode('utf8')))
-    # print(hashlib.md5(e.encode('utf8')).hexdigest())
-    # print(len(hashlib.md5(e.encode('utf8')).hexdigest()))
-    # print(int(hashlib.md5(e.encode('utf8')).hexdigest(), 16))
-    # print(bin(int(hashlib.md5(e.encode('utf8')).hexdigest(), 16)))
-    # print(len(bin(int(hashlib.md5(e.encode('utf8')).hexdigest(), 16))))
-    # print(hashlib.md5(e.encode('utf8')).digest())
-    # print(len(hashlib.md5(e.encode('utf8')).digest()))
+    text1 = '哈哈哈，你妈妈喊你回家吃饭哦，回家罗回家罗'
+    text2 = '哈哈哈，你妈妈叫你回家吃饭啦，回家罗回家罗'
     sh = SimHash()
-    print(sh.encode(e))
-    print(sh.encode(f))
-    print(sh.similar(e, f, 3))
+    encoded1 = sh.encode(text1)  # 进行SimHash编码
+    encoded2 = sh.encode(text2)  # 进行SimHash编码
+    similar = sh.similar(text1, text2, 3)  # 相似度计算，n=3
 
+    print(encoded1)
+    print(encoded2)
+    print(similar)
 
+    text1 = '南京市长江大桥上的汽车'
+    text2 = '南京长江大桥上的车'
+    sh = SimHash()
+    encoded1 = sh.encode(text1)  # 进行SimHash编码
+    encoded2 = sh.encode(text2)  # 进行SimHash编码
+    similar = sh.similar(text1, text2, 3)  # 相似度计算，n=3
+
+    print(encoded1)
+    print(encoded2)
+    print(similar)
 
