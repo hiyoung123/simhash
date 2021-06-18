@@ -6,8 +6,8 @@ import jieba
 
 
 class SimHash:
-    def __init__(self):
-        self.hash_size = 64
+    def __init__(self, hash_size=64):
+        self.hash_size = hash_size
         self.weight_dict = self.init_weight()
         self.tokenizer = jieba.cut
         self.stopwords = []
