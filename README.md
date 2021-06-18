@@ -52,3 +52,30 @@ True
 0000000000000000000000100000000000100000100000000001000000000001
 False
 ```
+
+```python
+    sh = SimHash()
+    encoded1 = sh.encode(text1)  # 进行SimHash编码
+    encoded2 = sh.encode(text2)  # 进行SimHash编码
+    encoded3 = sh.encode(text3)  # 进行SimHash编码
+    print(encoded1)
+    print(encoded2)
+    print(encoded3)
+
+    similar = sh.similar(text1, text2, 3)
+    print(similar)
+    similar = sh.similar(text1, text3, 3)
+    print(similar)
+    similar = sh.similar(text2, text3, 3)
+    print(similar)
+
+```
+结果
+```python
+0000000000000000000000111100100101011111111001000110000100001101
+0000000000000000000000111100100100011111111001100110000100001101
+0000000000000000000000100000100011011011110011000010000100001000
+True
+False
+False
+```
