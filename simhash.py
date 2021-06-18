@@ -49,7 +49,7 @@ class SimHash:
         if not text or len(text.strip()) == 0:
             return []
         tokens = self.tokenizer(text)
-        return [word for word in tokens if word not in self.stopwords]
+        return [word for word in tokens if word not in self.stopwords and len(word.strip()) != 0]
 
     @staticmethod
     def hash_weight(hash_code, weight):
@@ -78,8 +78,7 @@ class SimHash:
             x ^= len(text)
             if x == -1:
                 x = -2
-            x = bin(x)[2:].zfill(hash_size)[-hash_size:]
-            return str(x)
+            return bin(x)[2:].zfill(hash_size)[-hash_size:]
 
     @staticmethod
     def hamming(x: int, y: int, bit: int) -> int:
@@ -96,25 +95,45 @@ class SimHash:
 
 
 if __name__ == '__main__':
-    text1 = '哈哈哈，你妈妈喊你回家吃饭哦，回家罗回家罗'
-    text2 = '哈哈哈，你妈妈叫你回家吃饭啦，回家罗回家罗'
+    # text1 = '哈哈哈，你妈妈喊你回家吃饭哦，回家罗回家罗'
+    # text2 = '哈哈哈，你妈妈叫你回家吃饭啦，回家罗回家罗'
+    # sh = SimHash()
+    # encoded1 = sh.encode(text1)  # 进行SimHash编码
+    # encoded2 = sh.encode(text2)  # 进行SimHash编码
+    # similar = sh.similar(text1, text2, 3)  # 相似度计算，n=3
+    #
+    # print(encoded1)
+    # print(encoded2)
+    # print(similar)
+    #
+    # text1 = '南京市长江大桥上的汽车'
+    # text2 = '南京长江大桥上的车'
+    # sh = SimHash()
+    # encoded1 = sh.encode(text1)  # 进行SimHash编码
+    # encoded2 = sh.encode(text2)  # 进行SimHash编码
+    # similar = sh.similar(text1, text2, 3)  # 相似度计算，n=3
+    #
+    # print(encoded1)
+    # print(encoded2)
+    # print(similar)
+
+    with open('data/document1', 'r', encoding='utf-8') as f:
+        text1 = f.read()
+    with open('data/document2', 'r', encoding='utf-8') as f:
+        text2 = f.read()
+    with open('data/document3', 'r', encoding='utf-8') as f:
+        text3 = f.read()
     sh = SimHash()
     encoded1 = sh.encode(text1)  # 进行SimHash编码
     encoded2 = sh.encode(text2)  # 进行SimHash编码
-    similar = sh.similar(text1, text2, 3)  # 相似度计算，n=3
-
+    encoded3 = sh.encode(text3)  # 进行SimHash编码
     print(encoded1)
     print(encoded2)
+    print(encoded3)
+
+    similar = sh.similar(text1, text2, 3)
     print(similar)
-
-    text1 = '南京市长江大桥上的汽车'
-    text2 = '南京长江大桥上的车'
-    sh = SimHash()
-    encoded1 = sh.encode(text1)  # 进行SimHash编码
-    encoded2 = sh.encode(text2)  # 进行SimHash编码
-    similar = sh.similar(text1, text2, 3)  # 相似度计算，n=3
-
-    print(encoded1)
-    print(encoded2)
+    similar = sh.similar(text1, text3, 3)
     print(similar)
-
+    similar = sh.similar(text2, text3, 3)
+    print(similar)
